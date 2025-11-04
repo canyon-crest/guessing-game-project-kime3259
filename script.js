@@ -2,6 +2,7 @@
 let level, answer, score;
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
+const lossArr = [];
 date.textContent = time();
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
@@ -77,6 +78,7 @@ function quit(){
         level = levelArr[i].value;
     }
     }
+    lossArr.push(level);
     score = level;
     updateScore();
     reset();
@@ -85,10 +87,10 @@ function updateScore(){
     scoreArr.push(score);
     scoreArr.sort((a, b) => a - b);
     let lb = document.getElementsByName("leaderboard");
-    wins.textContent = "Total wins: " + scoreArr.length;
+    wins.textContent = "Total wins: " + scoreArr.length - lossArr.length;
     let sum = 0;
     for(let i = 0; i < scoreArr.length; i++){
-        sum += scoreArr[i];
+        sum += parseInt(scoreArr[i]);
         if(i < lb.length){
             lb[i].innerHTML = scoreArr[i];
         }
