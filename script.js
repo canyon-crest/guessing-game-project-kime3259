@@ -5,16 +5,29 @@ const scoreArr = [];
 const lossArr = [];
 const timeArr = [];
 let hotcold = false;
-let d = new Date();
-date.textContent = time();
+let playing = false;
 playBtn.addEventListener("click", play);
-playBtn.addEventListener("click", timer)
 guessBtn.addEventListener("click", makeGuess);
 giveUp.addEventListener("click", quit);
 hc.addEventListener("click", hctoggle)
 setInterval(time, 1000);
 time();
+setInterval(timer, 10);
+timer();
+function timer(){
+    let now = new Date();
+    let start = now.getTime();
+    if(playing){
+        sw = now.getTime() - start;
+        stopwatch.textContent = sw;
+    }
+    else{
+        let stop = now.getTime() - start;
+        stopwatch.textContent = stop;
+    }
+}
 function play(){
+    playing = true;
     let named = document.getElementById("named").value.toLowerCase();
     let name = named.charAt(0).toUpperCase() + named.slice(1);
     if(name == ""){
@@ -71,6 +84,7 @@ function reset(){
     guessBtn.disabled = true;
     guess.disabled = true;
     giveUp.disabled = true;
+    playing = false;
     guess.value = "";
     guess.placeholder = "";
     playBtn.disabled = false;
@@ -86,6 +100,7 @@ function quit(){
     }
     lossArr.push(level);
     score = level;
+    playing = false;
     updateScore();
     reset();
 }
@@ -105,10 +120,8 @@ function updateScore(){
     let avg = sum/scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
 }
-function timer(){
-    let start = d.getTime();
-}
 function time(){
+    let d = new Date();
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let month = months[d.getMonth()];
     let day = d.getDate();
