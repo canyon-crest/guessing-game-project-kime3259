@@ -3,10 +3,15 @@ let level, answer, score;
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
 const lossArr = [];
+const timeArr = [];
+let hotcold = false;
+let d = new Date();
 date.textContent = time();
 playBtn.addEventListener("click", play);
+playBtn.addEventListener("click", timer)
 guessBtn.addEventListener("click", makeGuess);
-giveUp.addEventListener("click", quit)
+giveUp.addEventListener("click", quit);
+hc.addEventListener("click", hctoggle)
 setInterval(time, 1000);
 time();
 function play(){
@@ -38,17 +43,17 @@ function makeGuess(){
         msg.textContent = "Please type in a name";
         return;
     }
-    let userGuess = parseInt(guess.value);
+    let userGuess = Number(guess.value);
     if(isNaN(userGuess) || userGuess < 1 || userGuess > level){
         msg.textContent = name + ", enter a VALID number from 1 to " + level;
         return;
     }
     score++;
     if(userGuess > answer){
-        msg.textContent = name + " has guessed too high, try again.";
+        msg.textContent = name + " has guessed too high ";
     }
     else if(userGuess < answer){
-        msg.textContent = name + " has guessed too low, try again.";
+        msg.textContent = name + " has guessed too low ";
     }
     else{
         if(score != 1){
@@ -60,6 +65,7 @@ function makeGuess(){
         updateScore();
         reset();
     }
+    hcmode();
 }
 function reset(){
     guessBtn.disabled = true;
@@ -87,7 +93,8 @@ function updateScore(){
     scoreArr.push(score);
     scoreArr.sort((a, b) => a - b);
     let lb = document.getElementsByName("leaderboard");
-    wins.textContent = "Total wins: " + scoreArr.length - lossArr.length;
+    won = scoreArr.length - lossArr.length;
+    wins.textContent = "Total wins: " + won;
     let sum = 0;
     for(let i = 0; i < scoreArr.length; i++){
         sum += parseInt(scoreArr[i]);
@@ -98,8 +105,10 @@ function updateScore(){
     let avg = sum/scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
 }
+function timer(){
+    let start = d.getTime();
+}
 function time(){
-    let d = new Date();
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let month = months[d.getMonth()];
     let day = d.getDate();
@@ -134,4 +143,34 @@ function time(){
     }
     const nowTime = month + " " + day + ", " + year + ", " + hour % 12 + ":" + minute + ":" + second + ampm;
     date.textContent = nowTime;
+}
+function hctoggle(){
+    if(!hotcold){
+        hc.textContent = "Hot/Cold Mode: On";
+    }
+    else{
+        hc.textContent = "Hot/Cold Mode: Off";
+    }
+    hotcold = !hotcold;
+}
+function hcmode(){
+    if(hotcold){
+        let userGuess = parseInt(guess.value);
+        let dist = Math.abs(answer - userGuess);
+        if(dist == 0){
+            return;
+        }
+        else if(dist < level/8){
+            msg.textContent += "(hot), try again";
+        }
+        else if(dist < level/4){
+            msg.textContent += " (lukewarm), try again"
+        }
+        else if(dist < level*3/8){
+            msg.textContent += " (cool), try again"
+        }
+        else{
+            msg.textContent += " (cold), try again"
+        }
+    }
 }
