@@ -1,5 +1,6 @@
 //css, disable or enable hot/cold, disallow same guess, optional guess limit, guess history
 let level, answer, score;
+let now = new Date();
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
 const lossArr = [];
@@ -15,10 +16,9 @@ time();
 setInterval(timer, 10);
 timer();
 function timer(){
-    let now = new Date();
     let start = now.getTime();
     if(playing){
-        sw = now.getTime() - start;
+        let sw = now.getTime() - start;
         stopwatch.textContent = sw;
     }
     else{
