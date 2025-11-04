@@ -5,6 +5,7 @@ const scoreArr = [];
 date.textContent = time();
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
+giveUp.addEventListener("click", quit)
 setInterval(time, 1000);
 time();
 function play(){
@@ -18,6 +19,7 @@ function play(){
     playBtn.disabled = true;
     guessBtn.disabled = false;
     guess.disabled = false;
+    giveUp.disabled = false;
     for(let i = 0; i < levelArr.length; i++){
         if(levelArr[i].checked){
             level = levelArr[i].value;
@@ -61,12 +63,23 @@ function makeGuess(){
 function reset(){
     guessBtn.disabled = true;
     guess.disabled = true;
+    giveUp.disabled = true;
     guess.value = "";
     guess.placeholder = "";
     playBtn.disabled = false;
     for(let i = 0; i < levelArr.length; i++){
         levelArr[i].disabled = false;
     }
+}
+function quit(){
+    for(let i = 0; i < levelArr.length; i++){
+    if(levelArr[i].checked){
+        level = levelArr[i].value;
+    }
+    }
+    score = level;
+    updateScore();
+    reset();
 }
 function updateScore(){
     scoreArr.push(score);
