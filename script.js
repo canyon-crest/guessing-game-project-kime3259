@@ -6,6 +6,7 @@ const lossArr = [];
 const timeArr = [];
 let hotcold = false;
 let playing = false;
+let lost = false;
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
 giveUp.addEventListener("click", quit);
@@ -15,20 +16,28 @@ time();
 setInterval(timer, 100);
 timer();
 function timer(){
+    let named = document.getElementById("named").value.toLowerCase();
+    let pname = named.charAt(0).toUpperCase() + named.slice(1);
+    if(pname == ""){
+        playing = false;
+    }
     if(playing){
         sw = (Date.now() - start)/1000;
+        if(isNaN(sw)){
+            sw = "";
+        }
         stopwatch.textContent = sw.toFixed(1);
     }
 }
 function play(){
     start = Date.now();
-    playing = true;
     let named = document.getElementById("named").value.toLowerCase();
-    let name = named.charAt(0).toUpperCase() + named.slice(1);
-    if(name == ""){
+    let pname = named.charAt(0).toUpperCase() + named.slice(1);
+    if(pname == ""){
         msg.textContent = "Please type in a name";
-        return;
+        return
     }
+    playing = true;
     score = 0;
     playBtn.disabled = true;
     guessBtn.disabled = false;
@@ -40,35 +49,35 @@ function play(){
         }
         levelArr[i].disabled = true;
     }
-    msg.textContent = name + ", guess a number from 1 to " + level;
+    msg.textContent = pname + ", guess a number from 1 to " + level;
     answer = Math.floor(Math.random()*level) + 1;
     guess.placeholder = answer;
 }
 function makeGuess(){
     let named = document.getElementById("named").value.toLowerCase();
-    let name = named.charAt(0).toUpperCase() + named.slice(1);
-    if(name == ""){
+    let pname = named.charAt(0).toUpperCase() + named.slice(1);
+    if(pname == ""){
         msg.textContent = "Please type in a name";
         return;
     }
     let userGuess = Number(guess.value);
     if(isNaN(userGuess) || userGuess < 1 || userGuess > level){
-        msg.textContent = name + ", enter a VALID number from 1 to " + level;
+        msg.textContent = pname + ", enter a VALID number from 1 to " + level;
         return;
     }
     score++;
     if(userGuess > answer){
-        msg.textContent = name + " has guessed too high ";
+        msg.textContent = pname + " has guessed too high ";
     }
     else if(userGuess < answer){
-        msg.textContent = name + " has guessed too low ";
+        msg.textContent = pname + " has guessed too low ";
     }
     else{
         if(score != 1){
-            msg.textContent = "Correct! " + name + " guessed the number in " + score + " tries! Press play to play again.";
+            msg.textContent = "Correct! " + pname + " guessed the number in " + score + " tries! Press play to play again.";
         }
         else{
-            msg.textContent = "Correct! " + name + " guessed the number in 1 try! Press play to play again.";
+            msg.textContent = "Correct! " + pname + " guessed the number in 1 try! Press play to play again.";
         }
         updateScore();
         reset();
@@ -96,6 +105,7 @@ function quit(){
     }
     lossArr.push(level);
     score = level;
+    lost = true;
     updateScore();
     reset();
 }
@@ -114,12 +124,18 @@ function updateScore(){
     }
     let avg = sum/scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
-    timeArr.push(sw);
+    if(!lost){
+        timeArr.push(sw);
+    }
+    lost = false;
     let sumt = 0;
     for(let i = 0; i < timeArr.length; i++){
-        sumt += parseFloat(timeArr[i]).toFixed(2);
+        sumt += Number(timeArr[i]);
     }
-    avgTime.textContent = "Average Time: " + (Number(sumt)/Number(timeArr.length));
+    if(scoreArr.length == 0){
+        sumt = "";
+    }
+    avgTime.textContent = "Average Time: " + (Number(sumt/won)).toFixed(2);
 }
 function time(){
     let d = new Date();
