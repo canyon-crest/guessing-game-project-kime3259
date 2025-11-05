@@ -1,6 +1,5 @@
-//css, disable or enable hot/cold, disallow same guess, optional guess limit, guess history
-let level, answer, score;
-let now = new Date();
+//css, disallow same guess, optional guess limit, guess history
+let level, answer, score, start, sw;
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
 const lossArr = [];
@@ -13,20 +12,16 @@ giveUp.addEventListener("click", quit);
 hc.addEventListener("click", hctoggle)
 setInterval(time, 1000);
 time();
-setInterval(timer, 10);
+setInterval(timer, 100);
 timer();
 function timer(){
-    let start = now.getTime();
     if(playing){
-        let sw = now.getTime() - start;
-        stopwatch.textContent = sw;
-    }
-    else{
-        let stop = now.getTime() - start;
-        stopwatch.textContent = stop;
+        sw = (Date.now() - start)/1000;
+        stopwatch.textContent = sw.toFixed(1);
     }
 }
 function play(){
+    start = Date.now();
     playing = true;
     let named = document.getElementById("named").value.toLowerCase();
     let name = named.charAt(0).toUpperCase() + named.slice(1);
@@ -85,6 +80,7 @@ function reset(){
     guess.disabled = true;
     giveUp.disabled = true;
     playing = false;
+    start = 0;
     guess.value = "";
     guess.placeholder = "";
     playBtn.disabled = false;
@@ -100,7 +96,6 @@ function quit(){
     }
     lossArr.push(level);
     score = level;
-    playing = false;
     updateScore();
     reset();
 }
@@ -119,6 +114,12 @@ function updateScore(){
     }
     let avg = sum/scoreArr.length;
     avgScore.textContent = "Average Score: " + avg.toFixed(2);
+    timeArr.push(sw);
+    let sumt = 0;
+    for(let i = 0; i < timeArr.length; i++){
+        sumt += parseFloat(timeArr[i]).toFixed(2);
+    }
+    avgTime.textContent = "Average Time: " + (Number(sumt)/Number(timeArr.length));
 }
 function time(){
     let d = new Date();
