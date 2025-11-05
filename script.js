@@ -1,4 +1,4 @@
-//css, disallow same guess, optional guess limit, guess history
+//css, disallow same guess, optional guess limit, guess history, leaderboard based on level
 let level, answer, score, start, sw;
 const levelArr = document.getElementsByName("level");
 const scoreArr = [];
@@ -26,7 +26,7 @@ function timer(){
         if(isNaN(sw)){
             sw = "";
         }
-        stopwatch.textContent = sw.toFixed(1);
+        stopwatch.textContent = "Game Time: " + sw.toFixed(1);
     }
 }
 function play(){
@@ -114,7 +114,8 @@ function updateScore(){
     scoreArr.sort((a, b) => a - b);
     let lb = document.getElementsByName("leaderboard");
     won = scoreArr.length - lossArr.length;
-    wins.textContent = "Total wins: " + won;
+    wins.textContent = "Total Wins: " + won;
+    losses.textContent = "Total Losses: " + lossArr.length;
     let sum = 0;
     for(let i = 0; i < scoreArr.length; i++){
         sum += parseInt(scoreArr[i]);
@@ -135,7 +136,11 @@ function updateScore(){
     if(scoreArr.length == 0){
         sumt = "";
     }
-    avgTime.textContent = "Average Time: " + (Number(sumt/won)).toFixed(2);
+    let avgt = (Number(sumt/won)).toFixed(2);
+    if(isNaN(avgt)){
+        avgt = "";
+    }
+    avgTime.textContent = "Average Time: " + avgt;
 }
 function time(){
     let d = new Date();
