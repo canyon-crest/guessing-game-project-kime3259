@@ -1,4 +1,3 @@
-//optional guess limit
 //REMOVE PLACEHOLDER
 let level, answer, score, start, sw, userGuess;
 const levelArr = document.getElementsByName("level");
@@ -6,6 +5,8 @@ const guessArr = [];
 const scoreArr = [];
 const lossArr = [];
 const timeArr = [];
+let guesslim = false;
+let ranout = false;
 let hotcold = false;
 let showr = false;
 let playing = false;
@@ -14,13 +15,15 @@ for(let i = 0; i < levelArr.length; i++){
     if(levelArr[i].checked){
         level = levelArr[i].value;
     }
-    levelArr[i].disabled = true;
+    levelArr[i].disabled = false;
 }
 let max = level + 1;
 let min = 0;
+let gl = Math.ceil(Math.log2(level));
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
 giveUp.addEventListener("click", quit);
+glimit.addEventListener("click", gtoggle)
 hc.addEventListener("click", hctoggle);
 r.addEventListener("click", rangetoggle);
 setInterval(time, 1000);
@@ -41,16 +44,23 @@ function play(){
     guessBtn.disabled = false;
     guess.disabled = false;
     giveUp.disabled = false;
+    glimit.disabled = true;
     hc.disabled = true;
     r.disabled = true;
     max = level + 1;
     min = 0;
-    interval.textContent = "Range: [1, " + level + "]";
+    gl = Math.ceil(Math.log2(level));
     for(let i = 0; i < levelArr.length; i++){
         if(levelArr[i].checked){
             level = levelArr[i].value;
         }
         levelArr[i].disabled = true;
+    }
+    if(guesslim){
+        gleft.textContent = "Guesses Left: " + gl;
+    }
+    if(showr){
+        interval.textContent = "Range: [1, " + level + "]";
     }
     msg.textContent = pname + ", guess a number from 1 to " + level;
     answer = Math.floor(Math.random()*level) + 1;
@@ -78,9 +88,23 @@ function makeGuess(){
     score++;
     if(userGuess > answer){
         msg.textContent = pname + " has guessed too high ";
+        guesslimit();
+        if(gl == 0){
+            msg.textContent = pname + " ran out of guesses and lost";
+            ranout = true;
+            quit();
+            return;
+        }
     }
     else if(userGuess < answer){
         msg.textContent = pname + " has guessed too low ";
+        guesslimit();
+        if(gl == 0){
+            msg.textContent = pname + " ran out of guesses and lost";
+            ranout = true;
+            quit();
+            return;
+        }
     }
     else{
         msg.textContent = msg.textContent = "Correct! " + pname + " guessed the number in ";
@@ -88,37 +112,38 @@ function makeGuess(){
             msg.textContent += score + " tries! Your score was";
         }
         else{
-            msg.textContent += "1 try! Your score was"
+            msg.textContent += "1 try! Your score was";
         }
         if(score == 1){
-            msg.textContent += " excellent. "
+            msg.textContent += " excellent. ";
         }
         else if(score <= Math.ceil(Math.log2(level))/2){
-            msg.textContent += " great. "
+            msg.textContent += " great. ";
         }
         else if(score <= Math.ceil(Math.log2(level))){
-            msg.textContent += " good. "
+            msg.textContent += " good. ";
         }
         else if(score <= Math.ceil(Math.log2(level))*3/2){
-            msg.textContent += " okay. "
+            msg.textContent += " okay. ";
         }
         else if(score <= level){
-            msg.textContent += " bad. "
+            msg.textContent += " bad. ";
         }
         else{
-            msg.textContent += " terrible. "
+            msg.textContent += " terrible. ";
         }
         msg.textContent += "Press play to play again";
         updateScore();
         reset();
     }
-    range();
     hcmode();
+    range();
 }
 function reset(){
     guessBtn.disabled = true;
     guess.disabled = true;
     giveUp.disabled = true;
+    glimit.disabled = false;
     hc.disabled = false;
     r.disabled = false;
     playing = false;
@@ -132,6 +157,12 @@ function reset(){
     }
 }
 function quit(){
+    let named = document.getElementById("named").value.toLowerCase();
+    let pname = named.charAt(0).toUpperCase() + named.slice(1);
+    if(!ranout){
+        msg.textContent = pname + " gave up and lost";
+    }
+    ranout = false;
     for(let i = 0; i < levelArr.length; i++){
     if(levelArr[i].checked){
         level = levelArr[i].value;
@@ -298,5 +329,24 @@ function range(){
     }
     else{
         interval.textContent = "";
+    }
+}
+function gtoggle(){
+    if(!guesslim){
+        glimit.textContent = "Have Guess Limit: On";
+        gleft.textContent = "Guesses Left: " + gl;
+    }
+    else{
+        glimit.textContent = "Have Guess Limit: Off";
+        gleft.textContent = "";
+    }
+    guesslim = !guesslim;
+}
+function guesslimit(){
+    if(guesslim){
+        if(userGuess != answer){
+            gl--;
+            gleft.textContent = "Guesses Left: " + gl;
+        }
     }
 }
