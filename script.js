@@ -1,4 +1,3 @@
-//REMOVE PLACEHOLDER
 let level, answer, score, start, sw, userGuess;
 const levelArr = document.getElementsByName("level");
 const guessArr = [];
@@ -64,7 +63,6 @@ function play(){
     }
     msg.textContent = pname + ", guess a number from 1 to " + level;
     answer = Math.floor(Math.random()*level) + 1;
-    guess.placeholder = answer;
 }
 function makeGuess(){
     let named = document.getElementById("named").value.toLowerCase();
@@ -149,7 +147,6 @@ function reset(){
     playing = false;
     start = 0;
     guess.value = "";
-    guess.placeholder = "";
     playBtn.disabled = false;
     guessArr.length = 0;
     for(let i = 0; i < levelArr.length; i++){
