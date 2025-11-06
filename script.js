@@ -273,16 +273,16 @@ function hcmode(){
             return;
         }
         else if(dist < level/8){
-            msg.textContent += "(hot), try again";
+            msg.textContent += " (hot)";
         }
         else if(dist < level/4){
-            msg.textContent += " (lukewarm), try again";
+            msg.textContent += " (lukewarm)";
         }
         else if(dist < level*3/8){
-            msg.textContent += " (cool), try again";
+            msg.textContent += " (cool)";
         }
         else if(dist < level){
-            msg.textContent += " (cold), try again";
+            msg.textContent += " (cold)";
         }
         else{
             return;
@@ -311,18 +311,18 @@ function range(){
         else if(userGuess < answer && userGuess > min){
             min = userGuess;
         }
-        if(min == 0){
-            interval.textContent = "Range: [1";
-        }
-        else{
+        if(min != 0){
             interval.textContent = "Range: (" + min;
         }
+        else{
+            interval.textContent = "Range: [1";
+        }
         interval.textContent += ", ";
-        if(max == level + 1){
-            interval.textContent += level + "]"
+        if(max != Number(level + 1)){
+            interval.textContent += max + ")";
         }
         else{
-            interval.textContent += max + ")";
+            interval.textContent += level + "]";
         }
     }
     else{
