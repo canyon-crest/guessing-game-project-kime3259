@@ -318,12 +318,13 @@ function range(){
             interval.textContent = "Range: [1";
         }
         interval.textContent += ", ";
+        let asdf = false;
         for(let i = 0; i < guessArr.length; i++){
-            if(guessArr[i] > answer && guessArr[i] < max){
-                max = guessArr[i];
+            if(guessArr[i] == max){
+                asdf = true;
             }
         }
-        if(max != parseInt(level + 1)){
+        if(max != (level + 1) && asdf == true){
             interval.textContent += max + ")";
         }
         else{
