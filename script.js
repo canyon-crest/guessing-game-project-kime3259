@@ -85,7 +85,7 @@ function makeGuess(){
     guessArr.push(userGuess);
     score++;
     if(userGuess > answer){
-        msg.textContent = pname + " has guessed too high ";
+        msg.textContent = pname + " has guessed " + userGuess +  ", which is too high. Try again";
         guesslimit();
         if(gl == 0){
             msg.textContent = pname + " ran out of guesses and lost";
@@ -95,7 +95,7 @@ function makeGuess(){
         }
     }
     else if(userGuess < answer){
-        msg.textContent = pname + " has guessed too low ";
+        msg.textContent = pname + " has guessed " + userGuess + ", which is too low. Try again";
         guesslimit();
         if(gl == 0){
             msg.textContent = pname + " ran out of guesses and lost";
