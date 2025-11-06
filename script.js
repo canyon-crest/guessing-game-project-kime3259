@@ -98,14 +98,14 @@ function makeGuess(){
         msg.textContent = pname + " has guessed " + userGuess + ", which is too low. Try again";
         guesslimit();
         if(gl == 0){
-            msg.textContent = pname + " ran out of guesses and lost";
+            msg.textContent = pname + " ran out of guesses and lost.";
             ranout = true;
             quit();
             return;
         }
     }
     else{
-        msg.textContent = msg.textContent = "Correct! " + pname + " guessed the number in ";
+        msg.textContent = msg.textContent = "Correct! " + pname + " guessed the number, " + answer + " in";
         if(score != 1){
             msg.textContent += score + " tries! Your score was";
         }
@@ -157,8 +157,9 @@ function quit(){
     let named = document.getElementById("named").value.toLowerCase();
     let pname = named.charAt(0).toUpperCase() + named.slice(1);
     if(!ranout){
-        msg.textContent = pname + " gave up and lost";
+        msg.textContent = pname + " gave up and lost.";
     }
+    msg.textContent += " The number was " + answer;
     ranout = false;
     for(let i = 0; i < levelArr.length; i++){
     if(levelArr[i].checked){
