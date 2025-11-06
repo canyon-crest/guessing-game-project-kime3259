@@ -330,6 +330,7 @@ function range(){
         else{
             interval.textContent += level + "]";
         }
+        asdf = false;
     }
     else{
         interval.textContent = "";
