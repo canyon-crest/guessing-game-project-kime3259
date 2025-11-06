@@ -10,12 +10,14 @@
     <h3>Name</h3>
     <input type="text" id="named">
 
-    <h3>Level</h3>
+    <h3>Level and Settings</h3>
     <input type="radio" name="level" id="e" value="10" checked><label for="e">Easy (10)</label>
     <input type="radio" name="level" id="m" value="50"><label for="m">Medium (50)</label>
     <input type="radio" name="level" id="h" value="100"><label for="h">Hard (100)</label>
 
     <br><br><button id="hc">Hot/Cold Mode: Off</button>
+
+    <br><br><button id="r">Show Narrowed Down Range: Off</button>
 
     <br><br><button id="playBtn">Play</button>
 
@@ -23,7 +25,8 @@
     <input type="text" id="guess" disabled>
     <button id="guessBtn" disabled>Guess</button>
     <button id="giveUp" disabled>Give Up</button>
-    <br><p id="stopwatch">Game Time: </p>
+    <br><p id="interval"></p>
+    <p id="stopwatch">Game Time: </p>
 
     <h3>Stats</h3>
     <p id="wins">Total Wins: 0</p>

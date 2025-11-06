@@ -1,34 +1,32 @@
-//css, disallow same guess, optional guess limit, guess history, leaderboard based on level
-let level, answer, score, start, sw;
+//optional guess limit
+//REMOVE PLACEHOLDER
+let level, answer, score, start, sw, userGuess;
 const levelArr = document.getElementsByName("level");
+const guessArr = [];
 const scoreArr = [];
 const lossArr = [];
 const timeArr = [];
 let hotcold = false;
+let showr = false;
 let playing = false;
 let lost = false;
+for(let i = 0; i < levelArr.length; i++){
+    if(levelArr[i].checked){
+        level = levelArr[i].value;
+    }
+    levelArr[i].disabled = true;
+}
+let max = level + 1;
+let min = 0;
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
 giveUp.addEventListener("click", quit);
-hc.addEventListener("click", hctoggle)
+hc.addEventListener("click", hctoggle);
+r.addEventListener("click", rangetoggle);
 setInterval(time, 1000);
 time();
 setInterval(timer, 100);
 timer();
-function timer(){
-    let named = document.getElementById("named").value.toLowerCase();
-    let pname = named.charAt(0).toUpperCase() + named.slice(1);
-    if(pname == ""){
-        playing = false;
-    }
-    if(playing){
-        sw = (Date.now() - start)/1000;
-        if(isNaN(sw)){
-            sw = "";
-        }
-        stopwatch.textContent = "Game Time: " + sw.toFixed(1);
-    }
-}
 function play(){
     start = Date.now();
     let named = document.getElementById("named").value.toLowerCase();
@@ -43,6 +41,11 @@ function play(){
     guessBtn.disabled = false;
     guess.disabled = false;
     giveUp.disabled = false;
+    hc.disabled = true;
+    r.disabled = true;
+    max = level + 1;
+    min = 0;
+    interval.textContent = "Range: [1, " + level + "]";
     for(let i = 0; i < levelArr.length; i++){
         if(levelArr[i].checked){
             level = levelArr[i].value;
@@ -60,11 +63,18 @@ function makeGuess(){
         msg.textContent = "Please type in a name";
         return;
     }
-    let userGuess = Number(guess.value);
+    userGuess = Number(guess.value);
     if(isNaN(userGuess) || userGuess < 1 || userGuess > level){
         msg.textContent = pname + ", enter a VALID number from 1 to " + level;
         return;
     }
+    for(let i = 0; i < guessArr.length; i++){
+        if(userGuess == guessArr[i]){
+            msg.textContent = pname + ", you've already guessed " + userGuess;
+            return;
+        }
+    }
+    guessArr.push(userGuess);
     score++;
     if(userGuess > answer){
         msg.textContent = pname + " has guessed too high ";
@@ -73,26 +83,50 @@ function makeGuess(){
         msg.textContent = pname + " has guessed too low ";
     }
     else{
+        msg.textContent = msg.textContent = "Correct! " + pname + " guessed the number in ";
         if(score != 1){
-            msg.textContent = "Correct! " + pname + " guessed the number in " + score + " tries! Press play to play again.";
+            msg.textContent += score + " tries! Your score was";
         }
         else{
-            msg.textContent = "Correct! " + pname + " guessed the number in 1 try! Press play to play again.";
+            msg.textContent += "1 try! Your score was"
         }
+        if(score == 1){
+            msg.textContent += " excellent. "
+        }
+        else if(score <= Math.ceil(Math.log2(level))/2){
+            msg.textContent += " great. "
+        }
+        else if(score <= Math.ceil(Math.log2(level))){
+            msg.textContent += " good. "
+        }
+        else if(score <= Math.ceil(Math.log2(level))*3/2){
+            msg.textContent += " okay. "
+        }
+        else if(score <= level){
+            msg.textContent += " bad. "
+        }
+        else{
+            msg.textContent += " terrible. "
+        }
+        msg.textContent += "Press play to play again";
         updateScore();
         reset();
     }
+    range();
     hcmode();
 }
 function reset(){
     guessBtn.disabled = true;
     guess.disabled = true;
     giveUp.disabled = true;
+    hc.disabled = false;
+    r.disabled = false;
     playing = false;
     start = 0;
     guess.value = "";
     guess.placeholder = "";
     playBtn.disabled = false;
+    guessArr.length = 0;
     for(let i = 0; i < levelArr.length; i++){
         levelArr[i].disabled = false;
     }
@@ -141,6 +175,20 @@ function updateScore(){
         avgt = "";
     }
     avgTime.textContent = "Average Time: " + avgt;
+}
+function timer(){
+    let named = document.getElementById("named").value.toLowerCase();
+    let pname = named.charAt(0).toUpperCase() + named.slice(1);
+    if(pname == ""){
+        playing = false;
+    }
+    if(playing){
+        sw = (Date.now() - start)/1000;
+        if(isNaN(sw)){
+            sw = "";
+        }
+        stopwatch.textContent = "Game Time: " + sw.toFixed(1);
+    }
 }
 function time(){
     let d = new Date();
@@ -199,13 +247,56 @@ function hcmode(){
             msg.textContent += "(hot), try again";
         }
         else if(dist < level/4){
-            msg.textContent += " (lukewarm), try again"
+            msg.textContent += " (lukewarm), try again";
         }
         else if(dist < level*3/8){
-            msg.textContent += " (cool), try again"
+            msg.textContent += " (cool), try again";
+        }
+        else if(dist < level){
+            msg.textContent += " (cold), try again";
         }
         else{
-            msg.textContent += " (cold), try again"
+            return;
         }
+    }
+}
+function rangetoggle(){
+    if(!showr){
+        r.textContent = "Show Narrowed Down Range: On";
+        interval.textContent = "Range: ";
+    }
+    else{
+        r.textContent = "Show Narrowed Down Range: Off";
+        interval.textContent = "";
+    }
+    showr = !showr;
+}
+function range(){
+    if(showr){
+        if(userGuess == answer){
+            return;
+        }
+        else if(userGuess > answer && userGuess < max){
+            max = userGuess;
+        }
+        else if(userGuess < answer && userGuess > min){
+            min = userGuess;
+        }
+        if(min == 0){
+            interval.textContent = "Range: [1";
+        }
+        else{
+            interval.textContent = "Range: (" + min;
+        }
+        interval.textContent += ", ";
+        if(max == level + 1){
+            interval.textContent += level + "]"
+        }
+        else{
+            interval.textContent += max + ")";
+        }
+    }
+    else{
+        interval.textContent = "";
     }
 }
